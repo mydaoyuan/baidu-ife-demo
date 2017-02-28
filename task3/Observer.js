@@ -25,7 +25,7 @@ Observer.prototype.convat = function(key, val) {
     },
     set: function(newval){
       console.log('你设置了 '+ key + ', ' + '新的值为 ' + newval);
-      self.emit(name, newval);
+      self.emit(key, newval);
       if (newval instanceof Object ) {
         new Observer(newval);
       }
