@@ -10,7 +10,7 @@ Observer.prototype.transformAll = function(obj) {
     var key = keyarr[i];
     var value = obj[keyarr[i]];
     if (value instanceof Object ) {
-        new Observer(value,key); // value此时为对象，new Observer()会修改此对象，修改的结果展示在了obj当中。
+        new Observer(value,this.$p + '.' + key); // value此时为对象，new Observer()会修改此对象，修改的结果展示在了obj当中。
     } else {
       this.convat(key, value, this.$p); // $p  传入父key
     }
@@ -27,10 +27,11 @@ Observer.prototype.convat = function(key, val, $p) {
       return val;
     },
     set: function(newval){
+      var allkey = $p+ '.' + key;
       console.log('你设置了 '+ key + ', ' + '新的值为 ' + newval);
-      self.emit($p+ '.' + key, newval);  // 触发形式为 father.child    newval为传入信息
+      self.emit(allkey, newval);  // 触发形式为 father.child    newval为传入信息
       if (newval instanceof Object ) {
-        new Observer(newval, key);  // 如果改写为对象
+        new Observer(newval, allkey);  // 如果改写为对象
       }
       val =  newval
     },
@@ -47,8 +48,10 @@ Observer.prototype.$watch = function(name, fn) {
 }
 Observer.prototype.emit = function(name) {
   if (name.indexOf('.') !== -1) {
-    var parent = name.split('.')[0];
-    this.emit(parent);
+    var parent = name.split('.');
+    for (var i =0;i<parent.length;i++){
+      this.emit(parent[i]);
+    }
   }
 
   var info = Array.prototype.slice.call(arguments,1);
